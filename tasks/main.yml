@@ -1,0 +1,19 @@
+---
+- name: destroy libvirt domain
+  command: "virsh destroy {{ inventory_hostname }}"
+  args:
+    removes: "/var/lib/libvirt/qemu/{{ inventory_hostname }}.monitor"
+  sudo: yes
+  delegate_to: "{{ hyper }}"
+
+- name: undefine libvirt domain and remove its disks
+  command: "virsh undefine --remove-all-storage {{ inventory_hostname }}" 
+  args:
+    removes: "/etc/libvirt/qemu/{{ inventory_hostname }}.xml"
+  sudo: yes
+  delegate_to: "{{ hyper }}"
+
+- name: remove host from the puppetmaster
+  command: "puppet cert clean {{ fqdn }}"
+  sudo: yes
+  delegate_to: "{{ puppetmaster }}"
