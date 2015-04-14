@@ -15,5 +15,7 @@
 
 - name: remove host from the puppetmaster
   command: "puppet cert clean {{ fqdn }}"
+  args:
+    removes: "/var/lib/puppet/ssl/ca/signed/{{ fqdn }}.pem"
   sudo: yes
   delegate_to: "{{ puppetmaster }}"
