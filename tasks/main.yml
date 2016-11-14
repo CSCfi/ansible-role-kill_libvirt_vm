@@ -1,21 +1,42 @@
 ---
-- name: destroy libvirt domain
+- name: check for domain monitor file in new location
+  stat: path="/var/lib/libvirt/qemu/domain-{{ inventory_hostname }}/monitor.sock"
+  register: monitor_file_in_new_location
+  become: yes
+  delegate_to: "{{ hyper }}"
+
+- name: check for domain monitor file in old location
+  stat: path="/var/lib/libvirt/qemu/{{ inventory_hostname }}.monitor"
+  register: monitor_file_in_old_location
+  become: yes
+  delegate_to: "{{ hyper }}"
+
+- name: destroy libvirt domain (monitor file new location)
+  command: "virsh destroy {{ inventory_hostname }}"
+  args:
+    removes: "/var/lib/libvirt/qemu/domain-{{ inventory_hostname }}/monitor.sock"
+  become: yes
+  delegate_to: "{{ hyper }}"
+  when: monitor_file_in_new_location.stat.exists == True
+
+- name: destroy libvirt domain (monitor file old location)
   command: "virsh destroy {{ inventory_hostname }}"
   args:
     removes: "/var/lib/libvirt/qemu/{{ inventory_hostname }}.monitor"
-  sudo: yes
+  become: yes
   delegate_to: "{{ hyper }}"
+  when: monitor_file_in_old_location.stat.exists == True
 
 - name: undefine libvirt domain and remove its disks
   command: "virsh undefine --remove-all-storage {{ inventory_hostname }}" 
   args:
     removes: "/etc/libvirt/qemu/{{ inventory_hostname }}.xml"
-  sudo: yes
+  become: yes
   delegate_to: "{{ hyper }}"
 
 - name: remove host from the puppetmaster
   command: "puppet cert clean {{ fqdn }}"
   args:
     removes: "/var/lib/puppet/ssl/ca/signed/{{ fqdn }}.pem"
-  sudo: yes
+  become: yes
   delegate_to: "{{ puppetmaster }}"
