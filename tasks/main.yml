@@ -39,4 +39,4 @@
   args:
     removes: "/var/lib/puppet/ssl/ca/signed/{{ fqdn }}.pem"
   become: yes
-  delegate_to: "{{ puppetmaster }}"
+  delegate_to: "{{ puppetmaster }}"
