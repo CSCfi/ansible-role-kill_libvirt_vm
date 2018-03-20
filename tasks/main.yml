@@ -28,7 +28,7 @@
   when: monitor_file_in_old_location.stat.exists == True
 
 - name: undefine libvirt domain and remove its disks
-  command: "virsh undefine --remove-all-storage {{ inventory_hostname }}" 
+  command: "virsh undefine --remove-all-storage {{ inventory_hostname }}"
   args:
     removes: "/etc/libvirt/qemu/{{ inventory_hostname }}.xml"
   become: yes
