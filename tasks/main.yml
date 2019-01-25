@@ -21,6 +21,8 @@
         name: "{{ inventory_hostname }}"
         state: destroyed
 
+    # Or do we have to do this?
+    # virsh undefine --remove-all-storage {{ inventory_hostname }}
     - name: undefined libvirt domain
       virt:
         name: "{{ inventory_hostname }}"
