@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/CSCfi/ansible-role-kill_libvirt_vm.svg?branch=master)](https://travis-ci.org/CSCfi/ansible-role-kill_libvirt_vm)
 ansible-role-kill_libvirt_vm
 =========
 
