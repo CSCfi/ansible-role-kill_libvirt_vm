@@ -1,2 +1,3 @@
 ---
 protected: yes
+clean_puppet_cert: True

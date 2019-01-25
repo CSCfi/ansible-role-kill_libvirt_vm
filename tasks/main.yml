@@ -1,42 +1,39 @@
 ---
-- name: check for domain monitor file in new location
-  stat: path="/var/lib/libvirt/qemu/domain-{{ inventory_hostname }}/monitor.sock"
-  register: monitor_file_in_new_location
+
+- block:
+
+    # active listDomainsID & defined listDefinedDomains from ansible's virt.py
+    - name: check if the VM is active or defined
+      virt:
+        name: "{{ inventory_hostname }}"
+        command: list_vms
+      register: reg_kill_list_result
+      failed_when: inventory_hostname not in reg_kill_list_result.list_vms
+      changed_when: False
+
+    - name: Print VMs on {{ hyper }}
+      debug:
+        var: reg_kill_list_result.list_vms
+        verbosity: 1
+
+    - name: destroy libvirt domain
+      virt:
+        name: "{{ inventory_hostname }}"
+        state: destroyed
+
+    - name: undefined libvirt domain
+      virt:
+        name: "{{ inventory_hostname }}"
+        command: undefine
+
+    - name: remove host from the puppetmaster
+      command: "puppet cert clean {{ fqdn }}"
+      args:
+        removes: "/var/lib/puppet/ssl/ca/signed/{{ fqdn }}.pem"
+      delegate_to: "{{ puppetmaster }}"
+      when: kill_clean_puppet_cert
+ 
   become: yes
   delegate_to: "{{ hyper }}"
 
-- name: check for domain monitor file in old location
-  stat: path="/var/lib/libvirt/qemu/{{ inventory_hostname }}.monitor"
-  register: monitor_file_in_old_location
-  become: yes
-  delegate_to: "{{ hyper }}"
-
-- name: destroy libvirt domain (monitor file new location)
-  command: "virsh destroy {{ inventory_hostname }}"
-  args:
-    removes: "/var/lib/libvirt/qemu/domain-{{ inventory_hostname }}/monitor.sock"
-  become: yes
-  delegate_to: "{{ hyper }}"
-  when: monitor_file_in_new_location.stat.exists == True
-
-- name: destroy libvirt domain (monitor file old location)
-  command: "virsh destroy {{ inventory_hostname }}"
-  args:
-    removes: "/var/lib/libvirt/qemu/{{ inventory_hostname }}.monitor"
-  become: yes
-  delegate_to: "{{ hyper }}"
-  when: monitor_file_in_old_location.stat.exists == True
-
-- name: undefine libvirt domain and remove its disks
-  command: "virsh undefine --remove-all-storage {{ inventory_hostname }}"
-  args:
-    removes: "/etc/libvirt/qemu/{{ inventory_hostname }}.xml"
-  become: yes
-  delegate_to: "{{ hyper }}"
-
-- name: remove host from the puppetmaster
-  command: "puppet cert clean {{ fqdn }}"
-  args:
-    removes: "/var/lib/puppet/ssl/ca/signed/{{ fqdn }}.pem"
-  become: yes
-  delegate_to: "{{ puppetmaster }}"
+...
