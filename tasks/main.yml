@@ -33,7 +33,7 @@
       args:
         removes: "/var/lib/puppet/ssl/ca/signed/{{ fqdn }}.pem"
       delegate_to: "{{ puppetmaster }}"
-      when: kill_clean_puppet_cert
+      when: kill_clean_puppet_cert and puppetmaster is defined
  
   become: yes
   delegate_to: "{{ hyper }}"
