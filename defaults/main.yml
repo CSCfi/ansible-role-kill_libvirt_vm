@@ -1,3 +1,4 @@
 ---
 protected: yes
 kill_clean_puppet_cert: True
+kill_libvirt_clean_storage: False

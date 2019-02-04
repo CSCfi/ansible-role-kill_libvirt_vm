@@ -21,12 +21,15 @@
         name: "{{ inventory_hostname }}"
         state: destroyed
 
-    # Or do we have to do this?
-    # virsh undefine --remove-all-storage {{ inventory_hostname }}
-    - name: undefined libvirt domain
+    - name: undefined libvirt domain - does not remove any storage
       virt:
         name: "{{ inventory_hostname }}"
         command: undefine
+      when: not kill_libvirt_clean_storage
+
+    - name: undefine and remove-all-storage for {{ inventory_hostname }}
+      command: "virsh undefine --remove-all-storage {{ inventory_hostname }}"
+      when: kill_libvirt_clean_storage
 
     - name: remove host from the puppetmaster
       command: "puppet cert clean {{ fqdn }}"
