@@ -74,3 +74,4 @@ Author Information
   * Original author Risto Laurikainen @ CSC
   * Oscar Kramer
   * Johan Guldmyr
+  * Jukka Nousiainen
