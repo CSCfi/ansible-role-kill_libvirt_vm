@@ -32,7 +32,7 @@
       when: kill_libvirt_clean_storage
 
     - name: remove host from the puppetmaster
-      command: "puppet cert clean {{ inventory_hostname }}"
+      command: "/opt/puppetlabs/bin/puppet cert clean {{ inventory_hostname }}"
       args:
         removes: "/etc/puppetlabs/puppet/ssl/ca/signed/{{ inventory_hostname }}.pem"
       delegate_to: "{{ puppetmaster }}"
