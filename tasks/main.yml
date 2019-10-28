@@ -34,7 +34,7 @@
     - name: remove host from the puppetmaster
       command: "puppet cert clean {{ inventory_hostname }}"
       args:
-        removes: "/var/lib/puppet/ssl/ca/signed/{{ inventory_hostname }}.pem"
+        removes: "/etc/puppetlabs/puppet/ssl/ca/signed/{{ inventory_hostname }}.pem"
       delegate_to: "{{ puppetmaster }}"
       when: kill_clean_puppet_cert and puppetmaster is defined
  
