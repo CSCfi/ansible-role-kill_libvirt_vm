@@ -12,6 +12,8 @@ Requirements
 
 Libvirt
 
+Cleaning Cert: puppet version >= 4
+
 Role Variables
 --------------
 
