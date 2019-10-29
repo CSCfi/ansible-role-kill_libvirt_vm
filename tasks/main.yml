@@ -3,7 +3,7 @@
 - block:
 
     # active listDomainsID & defined listDefinedDomains from ansible's virt.py
-    - name: check if the VM is active or defined
+    - name: check if the VM is active or defined - fail if it is not running where it is supposed to
       virt:
         name: "{{ inventory_hostname }}"
         command: list_vms
